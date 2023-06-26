@@ -1,0 +1,40 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-claim
+  labels:
+    environment: none
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: test-claim
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+kind: Pod
+apiVersion: v1
+metadata:
+  name: pod-nfs-pvc-sample
+spec:
+  containers:
+    - name: nfs-client
+      image: alpine
+      command:
+        - /bin/sh
+      args:
+        - '-c'
+        - sleep 500000      
+      volumeMounts:
+        - name: data
+          mountPath: /var/nfs
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: test-claim
