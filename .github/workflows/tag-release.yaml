@@ -1,0 +1,28 @@
+name: tag and release
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+    types:
+      - ready_for_review
+      - review_requested
+      
+jobs:
+  tests:
+    uses: jayamorin/gha-workflows/.github/workflows/test-krm.yaml@main
+
+  develop:
+    uses: jayamorin/gha-workflows/.github/workflows/tag-prerelease-develop.yaml@main
+    needs: tests
+    secrets: inherit
+
+  main:
+    uses: jayamorin/gha-workflows/.github/workflows/tag-release-main.yaml@main
+    needs: tests
+    secrets: inherit
